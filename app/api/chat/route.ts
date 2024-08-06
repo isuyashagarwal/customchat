@@ -20,7 +20,6 @@ export async function POST(req: Request, res: Response) {
     },
   };
 
-  // Call the custom LLM API
   const response = await fetch("https://83o34nut5b.execute-api.us-east-1.amazonaws.com/KoboldLLMAPI", {
     method: "POST",
     headers: {
