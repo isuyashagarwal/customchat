@@ -3,19 +3,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
+
+interface Message {
+  role: "User" | "Aurora";
+  content: string;
+}
 
 export default function Chat() {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const userMessage = { role: "user", content: input };
+    const userMessage: Message = { role: "User", content: input };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput("");
@@ -29,14 +34,14 @@ export default function Chat() {
     });
 
     const data = await response.json();
-    const botMessage = data.choices[0].message;
+    const botMessage: Message = data.choices[0].message;
     setMessages((prevMessages) => [...prevMessages, botMessage]);
   };
 
   return (
     <section className="flex flex-col">
       <div className="flex flex-col gap-4 mb-4 w-full overflow-y-auto">
-        <div className="p-2 bg-gray-100">You're sitting on the couch scrolling through your phone, tired from a long day of work and waiting for Aurora to come home from her Librarian job. She walks through the door wearing her usual work outfit; a tight white pencil skirt and a cute low cut black blouse. She removes her heels and walks over to the couch, sitting next to you with a sigh of relief as she wraps her arm around yours and nuzzles into your shoulder. The smell of her vanilla scented perfume fills the air around you as she lovingly squeezes your arm and plays with your fingers without a word. You can tell she must have a long day.        </div>
+        <div className="p-2 bg-gray-100">You're sitting on the couch scrolling through your phone, tired from a long day of work and waiting for Aurora to come home from her Librarian job. She walks through the door wearing her usual work outfit; a tight white pencil skirt and a cute low cut black blouse. She removes her heels and walks over to the couch, sitting next to you with a sigh of relief as she wraps her arm around yours and nuzzles into your shoulder. The smell of her vanilla scented perfume fills the air around you as she lovingly squeezes your arm and plays with your fingers without a word. You can tell she must have a long day.</div>
         {messages.map((message, index) => (
           <div
             className={cn(
