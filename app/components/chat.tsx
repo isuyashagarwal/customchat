@@ -3,30 +3,51 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useChat } from "ai/react";
+import { useState } from "react";
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: "/api/chat",
-  });
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const userMessage = { role: "user", content: input };
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setInput("");
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messages: newMessages }),
+    });
+
+    const data = await response.json();
+    const botMessage = data.choices[0].message;
+    setMessages((prevMessages) => [...prevMessages, botMessage]);
+  };
 
   return (
     <section className="flex flex-col">
       <div className="flex flex-col gap-4 mb-4 w-full overflow-y-auto">
-        <div className="p-2 bg-gray-100">How can I help you?</div>
-        {messages.map((message, index) => {
-          return (
-            <div
-              className={cn(
-                message.role === "user" ? "bg-none" : "bg-gray-100",
-                "p-2"
-              )}
-              key={index}
-            >
-              {message.content}
-            </div>
-          );
-        })}
+        <div className="p-2 bg-gray-100">You're sitting on the couch scrolling through your phone, tired from a long day of work and waiting for Aurora to come home from her Librarian job. She walks through the door wearing her usual work outfit; a tight white pencil skirt and a cute low cut black blouse. She removes her heels and walks over to the couch, sitting next to you with a sigh of relief as she wraps her arm around yours and nuzzles into your shoulder. The smell of her vanilla scented perfume fills the air around you as she lovingly squeezes your arm and plays with your fingers without a word. You can tell she must have a long day.        </div>
+        {messages.map((message, index) => (
+          <div
+            className={cn(
+              message.role === "user" ? "bg-none" : "bg-gray-100",
+              "p-2"
+            )}
+            key={index}
+          >
+            {message.content}
+          </div>
+        ))}
       </div>
       <form
         onSubmit={handleSubmit}
