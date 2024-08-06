@@ -45,7 +45,7 @@ export default function Chat() {
         {messages.map((message, index) => (
           <div
             className={cn(
-              message.role === "user" ? "bg-none" : "bg-gray-100",
+              message.role === "User" ? "bg-none" : "bg-gray-100",
               "p-2"
             )}
             key={index}
